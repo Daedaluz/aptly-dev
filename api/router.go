@@ -163,7 +163,9 @@ func Router(c *ctx.AptlyContext) http.Handler {
 	}
 
 	{
+		api.GET("/gpg/key", apiGPGListKeys)
 		api.POST("/gpg/key", apiGPGAddKey)
+		api.DELETE("/gpg/key", apiGPGDeleteKey)
 	}
 
 	{
@@ -208,6 +210,7 @@ func Router(c *ctx.AptlyContext) http.Handler {
 
 	{
 		api.GET("/packages/:key", apiPackagesShow)
+		api.GET("/packages/:key/file", apiPackagesFile)
 		api.GET("/packages", apiPackages)
 	}
 
