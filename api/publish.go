@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/aptly-dev/aptly/aptly"
@@ -399,6 +400,8 @@ type publishedRepoUpdateSwitchParams struct {
 	Snapshots []sourceParams `                    json:"Snapshots"`
 	// Provide index files by hash
 	AcquireByHash *bool `                         json:"AcquireByHash"  example:"false"`
+	// Override list of published architectures
+	Architectures []string `                      json:"Architectures"  example:"amd64,armhf"`
 	// An optional field containing a comma separated list of OpenPGP key fingerprints to be used for validating the next Release file
 	SignedBy *string `                            json:"SignedBy"  example:""`
 	// Enable multiple packages with the same filename in different distributions
@@ -490,6 +493,15 @@ func apiPublishUpdateSwitch(c *gin.Context) {
 
 	if b.AcquireByHash != nil {
 		published.AcquireByHash = *b.AcquireByHash
+	}
+
+	if len(b.Architectures) > 0 {
+		archs := make([]string, len(b.Architectures))
+		for i, arch := range b.Architectures {
+			archs[i] = utils.SanitizePath(arch)
+		}
+		sort.Strings(archs)
+		published.Architectures = utils.StrSliceDeduplicate(archs)
 	}
 
 	if b.SignedBy != nil {
@@ -1001,6 +1013,8 @@ type publishedRepoUpdateParams struct {
 	SkipCleanup *bool `                           json:"SkipCleanup"     example:"false"`
 	// Provide index files by hash
 	AcquireByHash *bool `                         json:"AcquireByHash"   example:"false"`
+	// Override list of published architectures
+	Architectures []string `                      json:"Architectures"   example:"amd64,armhf"`
 	// An optional field containing a comma separated list of OpenPGP key fingerprints to be used for validating the next Release file
 	SignedBy *string `                            json:"SignedBy"   example:""`
 	// Enable multiple packages with the same filename in different distributions
@@ -1073,6 +1087,15 @@ func apiPublishUpdate(c *gin.Context) {
 
 	if b.AcquireByHash != nil {
 		published.AcquireByHash = *b.AcquireByHash
+	}
+
+	if len(b.Architectures) > 0 {
+		archs := make([]string, len(b.Architectures))
+		for i, arch := range b.Architectures {
+			archs[i] = utils.SanitizePath(arch)
+		}
+		sort.Strings(archs)
+		published.Architectures = utils.StrSliceDeduplicate(archs)
 	}
 
 	if b.SignedBy != nil {

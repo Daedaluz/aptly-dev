@@ -107,6 +107,10 @@ func aptlyPublishSwitch(cmd *commander.Command, args []string) error {
 		published.MultiDist = context.Flags().Lookup("multi-dist").Value.Get().(bool)
 	}
 
+	if context.GlobalFlags().Lookup("architectures").Value.String() != "" {
+		published.Architectures = context.ArchitecturesList()
+	}
+
 	err = published.Publish(context.PackagePool(), context, collectionFactory, signer, context.Progress(), forceOverwrite, context.SkelPath())
 	if err != nil {
 		return fmt.Errorf("unable to publish: %s", err)
@@ -137,8 +141,8 @@ func makeCmdPublishSwitch() *commander.Command {
 		Short:     "update published repository by switching to new source",
 		Long: `
 Command switches in-place published snapshots with new source contents. All
-publishing parameters are preserved (architecture list, distribution,
-component).
+publishing parameters are preserved (distribution, component).
+Architecture list can be overridden with global -architectures flag.
 
 For multiple component repositories, flag -component should be given with
 list of components to update. Corresponding sources should be given in the
