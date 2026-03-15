@@ -164,6 +164,8 @@ type publishedRepoCreateParams struct {
 	Label string `                                json:"Label"                 example:""`
 	// Value of Origin: field in published repository stanza
 	Origin string `                               json:"Origin"                example:""`
+	// Value of Description: field in published repository stanza
+	Description string `                          json:"Description"           example:""`
 	// when publishing, overwrite files in pool/ directory without notice
 	ForceOverwrite bool `                         json:"ForceOverwrite"        example:"false"`
 	// Override list of published architectures
@@ -342,6 +344,7 @@ func apiPublishRepoOrSnapshot(c *gin.Context) {
 			published.ButAutomaticUpgrades = b.ButAutomaticUpgrades
 		}
 		published.Label = b.Label
+		published.Description = b.Description
 
 		published.SkipContents = context.Config().SkipContentsPublishing
 		if b.SkipContents != nil {
@@ -404,6 +407,8 @@ type publishedRepoUpdateSwitchParams struct {
     Label *string `                               json:"Label"          example:"Debian"`
     // Value of Origin: field in published repository stanza
     Origin *string `                              json:"Origin"         example:"Debian"`
+    // Value of Description: field in published repository stanza
+    Description *string `                         json:"Description"    example:""`
 }
 
 // @Summary Update Published Repository
@@ -501,6 +506,10 @@ func apiPublishUpdateSwitch(c *gin.Context) {
 
 	if b.Origin != nil {
 		published.Origin = *b.Origin
+	}
+
+	if b.Description != nil {
+		published.Description = *b.Description
 	}
 
 	resources := []string{string(published.Key())}
@@ -1000,6 +1009,8 @@ type publishedRepoUpdateParams struct {
     Label *string `                               json:"Label"          example:"Debian"`
     // Value of Origin: field in published repository stanza
     Origin *string `                              json:"Origin"         example:"Debian"`
+    // Value of Description: field in published repository stanza
+    Description *string `                         json:"Description"    example:""`
 }
 
 // @Summary Update Published Repository
@@ -1078,6 +1089,10 @@ func apiPublishUpdate(c *gin.Context) {
 
 	if b.Origin != nil {
 		published.Origin = *b.Origin
+	}
+
+	if b.Description != nil {
+		published.Description = *b.Description
 	}
 
 	resources := []string{string(published.Key())}
