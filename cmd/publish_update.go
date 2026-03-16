@@ -76,6 +76,10 @@ func aptlyPublishUpdate(cmd *commander.Command, args []string) error {
 		published.MultiDist = context.Flags().Lookup("multi-dist").Value.Get().(bool)
 	}
 
+	if context.GlobalFlags().Lookup("architectures").Value.String() != "" {
+		published.Architectures = context.ArchitecturesList()
+	}
+
 	err = published.Publish(context.PackagePool(), context, collectionFactory, signer, context.Progress(), forceOverwrite, context.SkelPath())
 	if err != nil {
 		return fmt.Errorf("unable to publish: %s", err)
